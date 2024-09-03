@@ -1,6 +1,12 @@
 #include "gpio.h"
 #include <Arduino.h>
 
+void setupPins() {
+  pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(GPIO_NUM_4, OUTPUT);
+  pinMode(GPIO_NUM_5, OUTPUT);
+}
+
 std::string firstOn() {
   digitalWrite(GPIO_NUM_4, HIGH);
   return "First on";

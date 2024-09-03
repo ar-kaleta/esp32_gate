@@ -1,12 +1,13 @@
-#ifndef PINS_H
-#define PINS_H
+#ifndef GPIO_H
+#define GPIO_H
 
-#include "gpio.h"
 #include <string>
+
+void setupPins();
 
 std::string firstOn();
 std::string firstOff();
 std::string secondOn();
 std::string secondOff();
 
-#endif // PINS_H
+#endif // GPIO_H
