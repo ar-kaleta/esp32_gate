@@ -5,12 +5,13 @@
 #include "gpio.h"
 #include <WebServer.h>
 
-class MyServer{
+class MyServer {
 public:
   MyServer(int port = 80); // Constructor with a default port
-  void handleClient();
+  void handleClient(std::string);
   void beginServer();
   void handleRoot();
+  void handleStatus();
 
 private:
   WebServer server;

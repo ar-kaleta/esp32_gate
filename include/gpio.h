@@ -9,5 +9,7 @@ std::string firstOn();
 std::string firstOff();
 std::string secondOn();
 std::string secondOff();
+std::string flipPinState();
+std::string rcChangeState();
 
 #endif // GPIO_H

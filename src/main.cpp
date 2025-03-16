@@ -1,6 +1,7 @@
 #include "custom_logging.h"
 #include "web_server.h"
 #include <Arduino.h>
+#include <wifi.h>
 
 MyServer myServer(80);
 
@@ -13,5 +14,5 @@ void setup() {
 
 void loop() {
   digitalWrite(LED_BUILTIN, WiFi.status() == WL_CONNECTED);
-  myServer.handleClient();
+  myServer.handleClient(rcChangeState());
 }

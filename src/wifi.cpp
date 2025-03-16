@@ -1,6 +1,5 @@
 #include "wifi.h"
 
-
 void setupWifi() {
   WiFiMulti wifiMulti;
 

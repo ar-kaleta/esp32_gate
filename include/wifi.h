@@ -3,9 +3,8 @@
 
 #include <WiFiMulti.h>
 
-#define WIFI_SSID "UPC4555938"
-#define WIFI_PASSWORD "pttwatKejQw6"
-
+#define WIFI_SSID "turturowy_internet"
+#define WIFI_PASSWORD "yuxb9sf#rvBm"
 
 void setupWifi();
 
