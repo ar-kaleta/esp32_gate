@@ -1,7 +1,7 @@
 #include "custom_logging.h"
 #include "web_server.h"
+#include "wifi.h"
 #include <Arduino.h>
-#include <wifi.h>
 
 MyServer myServer(80);
 

@@ -3,8 +3,18 @@
 
 #include <WiFiMulti.h>
 
-#define WIFI_SSID "turturowy_internet"
-#define WIFI_PASSWORD "yuxb9sf#rvBm"
+// Wi-Fi credentials should live in `include/secrets.h` which is ignored by
+// version control. This file should define `WIFI_SSID` and `WIFI_PASSWORD`.
+#include "secrets.h"
+
+// Fallback placeholders (safe defaults for compiling on CI/host).
+#ifndef WIFI_SSID
+#define WIFI_SSID "your_ssid_here"
+#endif
+
+#ifndef WIFI_PASSWORD
+#define WIFI_PASSWORD "your_password_here"
+#endif
 
 void setupWifi();
 

@@ -1,55 +1,68 @@
 #include "custom_logging.h"
-#include <iostream>
 
+#if defined(ARDUINO)
 #include <Arduino.h>
-#include <algorithm> // Include for std::reverse
-#include <chrono>    // Add this line to include chrono library
+#else
+#include <iostream>
+#endif
+#include <algorithm>
 #include <ctime>
-#include <fstream>
-#include <iomanip>
-#include <sstream>
 #include <string>
 #include <vector>
 
 void addLogging(std::vector<std::string> &loggingEntries,
-                std::string logEntry) {
-  // Get current time
-  auto now = std::chrono::system_clock::now();
-  std::time_t now_time_t = std::chrono::system_clock::to_time_t(now);
-  std::tm local_time = *std::localtime(&now_time_t);
+                const std::string &logEntry) {
+  time_t now = time(nullptr);
+  struct tm timeinfo;
+#if defined(ARDUINO_ARCH_ESP32)
+  localtime_r(&now, &timeinfo);
+#else
+  localtime_r(&now, &timeinfo);
+#endif
 
-  // Format time
-  std::stringstream ss;
-  ss << std::put_time(&local_time, "%Y-%m-%d %H:%M:%S");
-  std::string formatted_time = ss.str();
+  char buf[32];
+  strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", &timeinfo);
 
-  loggingEntries.push_back(formatted_time + " | " + logEntry);
+  loggingEntries.push_back(std::string(buf) + " | " + logEntry);
+
+  // Keep logs bounded to avoid unbounded memory growth on embedded device
+  const size_t MAX_LOG_ENTRIES = 50;
+  if (loggingEntries.size() > MAX_LOG_ENTRIES) {
+    size_t removeCount = loggingEntries.size() - MAX_LOG_ENTRIES;
+    loggingEntries.erase(loggingEntries.begin(),
+                         loggingEntries.begin() + removeCount);
+  }
 }
 
-std::string formatLogging(std::vector<std::string> loggingEntries) {
-  std::string formattedLoggs;
-
-  for (const std::string &entry : loggingEntries) {
-    formattedLoggs += entry + "<br>";
+std::string formatLogging(const std::vector<std::string> &loggingEntries) {
+  std::string formatted;
+  for (const auto &e : loggingEntries) {
+    formatted += e + "<br>";
   }
-  return formattedLoggs;
+  return formatted;
 }
 
 std::vector<std::string>
-reverseLogging(std::vector<std::string> loggingEntries) {
-  std::reverse(loggingEntries.begin(), loggingEntries.end());
-  return loggingEntries;
+reverseLogging(const std::vector<std::string> &loggingEntries) {
+  std::vector<std::string> copy = loggingEntries;
+  std::reverse(copy.begin(), copy.end());
+  return copy;
 }
 
-void logEntries(std::vector<std::string> &loggingEntries,
+void logEntries(const std::vector<std::string> &loggingEntries,
                 const std::string &file_path) {
-  std::ofstream log_file(file_path, std::ios_base::app);
-  if (log_file.is_open()) {
-    // Write formatted entries to file
-    log_file << formatLogging(loggingEntries);
-    log_file.close();
-    std::cout << "Entries were logged to file." << std::endl;
-  } else {
-    std::cerr << "Unable to open log file." << std::endl;
+  // File I/O may not be available on all builds. Print to Serial (embedded)
+  // or std::cout (native host) instead.
+#if defined(ARDUINO)
+  Serial.println("--- Log entries (would write to: " +
+                 String(file_path.c_str()) + ") ---");
+  for (const auto &e : loggingEntries) {
+    Serial.println(String(e.c_str()));
   }
+#else
+  std::cout << "--- Log entries (would write to: " << file_path << ") ---\n";
+  for (const auto &e : loggingEntries) {
+    std::cout << e << std::endl;
+  }
+#endif
 }
